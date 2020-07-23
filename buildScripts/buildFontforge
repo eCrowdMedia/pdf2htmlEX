@@ -19,7 +19,7 @@ mkdir build
 
 cd build
 
-cmake        		                        \
+$CMAKE        		                          \
   -DCMAKE_BUILD_TYPE=Release                \
   -DCMAKE_INSTALL_PREFIX=$PDF2HTMLEX_PREFIX \
   -DBUILD_SHARED_LIBS:BOOL=OFF              \
@@ -54,7 +54,7 @@ cmake        		                        \
 #
 #for APATCHFILE in $(ls ../patches/fontforge-$FONTFORGE_VERSION-*)
 #do
-#  echo "patching fontforge using [$APATCHFILE]" 
+#  echo "patching fontforge using [$APATCHFILE]"
 #  patch -p 1 < $APATCHFILE
 #done
 
