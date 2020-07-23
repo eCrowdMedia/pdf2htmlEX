@@ -35,7 +35,7 @@ if [ -z "$PDF2HTMLEX_BRANCH" ]; then
     echo ""
     read -p "Enter the pdf2htmlEX branch or version: " PDF2HTMLEX_BRANCH
     echo ""
-    if [ -z "$PDF2HTMLEX_BRANCH" ]; then 
+    if [ -z "$PDF2HTMLEX_BRANCH" ]; then
       echo "PDF2HTMLEX_BRANCH not set... so we can not build anything."
       exit 1
     fi
@@ -52,6 +52,12 @@ elif test -r /etc/alpine-release ; then
   cat /etc/alpine-release
   export BUILD_OS=alpine
   export BUILD_DIST=$(cat /etc/alpine-release)
+elif test -r /etc/os-release ; then
+  cat /etc/os-release
+  # source /etc/os-release
+  . /etc/os-release
+  export BUILD_DIST=$ID
+  export BUILD_OS=AMI
 else
   echo "FAILURE: could not determine release"
   exit -1

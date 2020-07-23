@@ -23,7 +23,7 @@ sudo yum $UNATTENDED install     \
   ruby                           \
   autoconf                       \
   libtool                        \
-  cmake3                         \
+  $CMAKE                         \
   make                           \
   gcc72                          \
   gcc72-c++                      \
