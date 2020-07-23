@@ -42,8 +42,6 @@ if [ -z "$PDF2HTMLEX_BRANCH" ]; then
   fi
 fi
 
-export CMAKE="cmake"
-
 if test -r /etc/lsb-release ; then
   cat /etc/lsb-release
   # source /etc/lsb-release
@@ -60,7 +58,6 @@ elif test -r /etc/os-release ; then
   . /etc/os-release
   export BUILD_DIST=$ID
   export BUILD_OS=AMI
-  export CMAKE="cmake3"
 else
   echo "FAILURE: could not determine release"
   exit -1
@@ -85,4 +82,3 @@ echo "export BUILD_DIST=\"$BUILD_DIST\""                 >> buildScripts/reSourc
 echo "export BUILD_DATE=\"$BUILD_DATE\""                 >> buildScripts/reSourceVersionEnvs
 echo "export BUILD_TIME=\"$BUILD_TIME\""                 >> buildScripts/reSourceVersionEnvs
 echo "export PDF2HTMLEX_PREFIX=\"$PDF2HTMLEX_PREFIX\""   >> buildScripts/reSourceVersionEnvs
-echo "export CMAKE=\"$CMAKE\""                           >> buildScripts/reSourceVersionEnvs
