@@ -41,6 +41,7 @@ set -ev
 ################
 # do the build
 cd "$(dirname `dirname $0`)"
+sudo chmod -R a+w .
 
 ./buildScripts/versionEnvs
 

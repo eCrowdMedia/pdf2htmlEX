@@ -80,7 +80,8 @@ export MACHINE_ARCH="$(uname -m)"
 
 export PDF2HTMLEX_NAME=$PDF2HTMLEX_VERSION-$PDF2HTMLEX_BRANCH-$BUILD_DATE-$BUILD_OS-$BUILD_DIST-$MACHINE_ARCH
 
-sudo chmod +w buildScripts/
+sudo touch buildScripts/reSourceVersionEnvs
+sudo chmod a+w buildScripts/reSourceVersionEnvs
 echo "export PDF2HTMLEX_NAME=\"$PDF2HTMLEX_NAME\""       >  buildScripts/reSourceVersionEnvs
 echo "export PDF2HTMLEX_VERSION=\"$PDF2HTMLEX_VERSION\"" >> buildScripts/reSourceVersionEnvs
 echo "export POPPLER_VERSION=\"$POPPLER_VERSION\""       >> buildScripts/reSourceVersionEnvs
@@ -92,4 +93,4 @@ echo "export BUILD_DIST=\"$BUILD_DIST\""                 >> buildScripts/reSourc
 echo "export BUILD_DATE=\"$BUILD_DATE\""                 >> buildScripts/reSourceVersionEnvs
 echo "export BUILD_TIME=\"$BUILD_TIME\""                 >> buildScripts/reSourceVersionEnvs
 echo "export PDF2HTMLEX_PREFIX=\"$PDF2HTMLEX_PREFIX\""   >> buildScripts/reSourceVersionEnvs
-echo "export LIBDIR=\"$LIBDIR\""                                    >> $SOURCE_FOLDER/reSourceVersionEnvs
+echo "export LIBDIR=\"$LIBDIR\""                         >> buildScripts/reSourceVersionEnvs
