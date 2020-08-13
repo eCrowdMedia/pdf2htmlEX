@@ -82,15 +82,16 @@ export PDF2HTMLEX_NAME=$PDF2HTMLEX_VERSION-$PDF2HTMLEX_BRANCH-$BUILD_DATE-$BUILD
 
 sudo touch buildScripts/reSourceVersionEnvs
 sudo chmod a+w buildScripts/reSourceVersionEnvs
-echo "export PDF2HTMLEX_NAME=\"$PDF2HTMLEX_NAME\""       >  buildScripts/reSourceVersionEnvs
-echo "export PDF2HTMLEX_VERSION=\"$PDF2HTMLEX_VERSION\"" >> buildScripts/reSourceVersionEnvs
-echo "export POPPLER_VERSION=\"$POPPLER_VERSION\""       >> buildScripts/reSourceVersionEnvs
-echo "export FONTFORGE_VERSION=\"$FONTFORGE_VERSION\""   >> buildScripts/reSourceVersionEnvs
-echo "export PDF2HTMLEX_BRANCH=\"$PDF2HTMLEX_BRANCH\""   >> buildScripts/reSourceVersionEnvs
-echo "export MACHINE_ARCH=\"$MACHINE_ARCH\""             >> buildScripts/reSourceVersionEnvs
-echo "export BUILD_OS=\"$BUILD_OS\""                     >> buildScripts/reSourceVersionEnvs
-echo "export BUILD_DIST=\"$BUILD_DIST\""                 >> buildScripts/reSourceVersionEnvs
-echo "export BUILD_DATE=\"$BUILD_DATE\""                 >> buildScripts/reSourceVersionEnvs
-echo "export BUILD_TIME=\"$BUILD_TIME\""                 >> buildScripts/reSourceVersionEnvs
-echo "export PDF2HTMLEX_PREFIX=\"$PDF2HTMLEX_PREFIX\""   >> buildScripts/reSourceVersionEnvs
-echo "export LIBDIR=\"$LIBDIR\""                         >> buildScripts/reSourceVersionEnvs
+echo "export PDF2HTMLEX_NAME=\"$PDF2HTMLEX_NAME\""            >  buildScripts/reSourceVersionEnvs
+echo "export PDF2HTMLEX_VERSION=\"$PDF2HTMLEX_VERSION\""      >> buildScripts/reSourceVersionEnvs
+echo "export POPPLER_VERSION=\"$POPPLER_VERSION\""            >> buildScripts/reSourceVersionEnvs
+echo "export POPPLER_DATA_VERSION=\"$POPPLER_DATA_VERSION\""  >> buildScripts/reSourceVersionEnvs
+echo "export FONTFORGE_VERSION=\"$FONTFORGE_VERSION\""        >> buildScripts/reSourceVersionEnvs
+echo "export PDF2HTMLEX_BRANCH=\"$PDF2HTMLEX_BRANCH\""        >> buildScripts/reSourceVersionEnvs
+echo "export MACHINE_ARCH=\"$MACHINE_ARCH\""                  >> buildScripts/reSourceVersionEnvs
+echo "export BUILD_OS=\"$BUILD_OS\""                          >> buildScripts/reSourceVersionEnvs
+echo "export BUILD_DIST=\"$BUILD_DIST\""                      >> buildScripts/reSourceVersionEnvs
+echo "export BUILD_DATE=\"$BUILD_DATE\""                      >> buildScripts/reSourceVersionEnvs
+echo "export BUILD_TIME=\"$BUILD_TIME\""                      >> buildScripts/reSourceVersionEnvs
+echo "export PDF2HTMLEX_PREFIX=\"$PDF2HTMLEX_PREFIX\""        >> buildScripts/reSourceVersionEnvs
+echo "export LIBDIR=\"$LIBDIR\""                              >> buildScripts/reSourceVersionEnvs
