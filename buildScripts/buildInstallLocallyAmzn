@@ -27,7 +27,8 @@ fi
 # choose one of the following...
 #
 # export PDF2HTMLEX_BRANCH="<<YourTagHereWithNoSpaces>>"
-export PDF2HTMLEX_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+# export PDF2HTMLEX_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+export PDF2HTMLEX_BRANCH="master"
 
 # The following environment variable determines where the poppler,
 # poppler-data, fontforge and pdf2htmlEX packages are installed.
@@ -39,6 +40,7 @@ set -ev
 
 ################
 # do the build
+cd "$(dirname `dirname $0`)"
 
 ./buildScripts/versionEnvs
 
