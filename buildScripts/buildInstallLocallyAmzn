@@ -47,9 +47,9 @@ sudo chmod -R a+w .
 
 ./buildScripts/reportEnvs
 
-./buildScripts/getBuildToolsYum
+./buildScripts/getBuildToolsAmzn
 
-./buildScripts/getDevLibrariesYum
+./buildScripts/getDevLibrariesAmzn
 
 ./buildScripts/getPoppler
 
