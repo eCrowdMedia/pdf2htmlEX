@@ -1,0 +1,306 @@
+#!/bin/sh
+
+export SOURCE_FOLDER="$(pwd)"
+
+export UNATTENDED="-y"
+export MAKE_PARALLEL="-j $(nproc)"
+
+export PLATFORM="$(uname -r | sed 's/.*\(amzn[12]\).*/\1/')"
+export CMAKE="cmake3"
+
+if [ "$PLATFORM" == "amzn1" ] ; then
+  export GCC="gcc72"
+  export GPP="gcc72-c++"
+  export PYTHON_PIP3="python36-pip"
+  export PIP3="pip-3.6"
+else
+  export GCC="gcc"
+  export GPP="gcc-c++"
+  export PYTHON_PIP3="python3-pip"
+  export PIP3="pip3"
+fi
+
+export PDF2HTMLEX_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+export PDF2HTMLEX_PREFIX=/usr/local
+
+set -ev
+
+export PDF2HTMLEX_VERSION=0.18.8.rc1
+# export PDF2HTMLEX_VERSION=v0.14.6
+
+export GHOSTSCRIPT_VERSION=9.52
+
+export FREETYPE_VERSIOM=2.10.2
+export HARFBUZZ_VERSION=2.6.7
+export FONTCONFIG_VERSION=2.13.92
+export OPENJPEG_VERSION=2.3.1
+
+export POPPLER_VERSION=0.89.0
+# export POPPLER_VERSION=0.88.0
+# export POPPLER_VERSION=0.87.0
+# export POPPLER_VERSION=0.86.1
+# export POPPLER_VERSION=0.86.0
+# export POPPLER_VERSION=0.85.0
+# export POPPLER_VERSION=0.84.0
+# export POPPLER_VERSION=0.83.0
+# export POPPLER_VERSION=0.82.0
+# export POPPLER_VERSION=0.81.0
+# export POPPLER_VERSION=0.55.0
+
+export POPPLER_DATA_VERSION=0.4.9
+# export POPPLER_DATA_VERSION=0.4.7
+
+export TTFAUTOHINT_VERSION=1.8.3
+export LIBSPIRO_VERSION=20200505
+export LIBUNINAMESLIST_VERSION=20200413
+
+export FONTFORGE_VERSION=20200314
+# export FONTFORGE_VERSION=20170731
+
+if test -r /etc/os-release ; then
+   cat /etc/os-release
+   export BUILD_OS=$(grep '^ID=' /etc/os-release | cut -d'=' -f2)
+   export BUILD_DIST=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2)
+elif test -r /usr/lib/os-release ; then
+   cat /usr/lib/os-release
+   export BUILD_OS=$(grep '^ID=' /usr/lib/os-release | cut -d'=' -f2)
+   export BUILD_DIST=$(grep '^VERSION_ID=' /usr/lib/os-release | cut -d'=' -f2)
+else
+  echo "FAILURE: could not determine release"
+  exit -1
+fi
+
+export BUILD_DATE="$(date +%Y%m%d)"
+
+export BUILD_TIME="$(date +%Y_%m_%d-%H_%M_%S)"
+
+export MACHINE_ARCH="$(uname -m)"
+
+export PDF2HTMLEX_NAME=$PDF2HTMLEX_VERSION-$PDF2HTMLEX_BRANCH-$BUILD_DATE-$BUILD_OS-$BUILD_DIST-$MACHINE_ARCH
+
+export PKG_CONFIG_PATH=/usr/lib64/pkgconfig
+
+echo "Build env:"
+echo "           prefix: [$PDF2HTMLEX_PREFIX]"
+echo "       unattended: [$UNATTENDED]"
+echo "    make parallel: [$MAKE_PARALLEL]"
+echo "     distribution: [$BUILD_DIST]"
+
+echo "Ghostscript env:"
+echo "          version: [$GHOSTSCRIPT_VERSION]"
+
+echo "pdf2htmlEX env:"
+echo "          version: [$PDF2HTMLEX_VERSION]"
+echo "          poppler: [$POPPLER_VERSION]"
+echo "        fontforge: [$FONTFORGE_VERSION]"
+echo "       pdf2htmlEX: [$PDF2HTMLEX_BRANCH]"
+echo "     machine arch: [$MACHINE_ARCH]"
+
+echo "release env:"
+echo "       build date: [$BUILD_DATE]"
+echo "       build time: [$BUILD_TIME]"
+
+echo ""
+echo "-------------------------------------------------------------------"
+echo "INSTALLING Build Tools (using YUM)"
+echo "  (UNATTENDED: [$UNATTENDED])"
+echo "-------------------------------------------------------------------"
+echo ""
+
+set -ev
+
+sudo yum $UNATTENDED update
+sudo yum $UNATTENDED groupinstall "Development Tools"
+sudo yum $UNATTENDED install    \
+  sudo                          \
+  wget                          \
+  git                           \
+  pkgconfig                     \
+  ruby                          \
+  autoconf                      \
+  libtool                       \
+  $CMAKE                        \
+  make                          \
+  $GCC                          \
+  $GPP                          \
+  gettext                       \
+  java-1.8.0-openjdk            \
+  java-1.8.0-openjdk-headless   \
+  rpm-build                     \
+  jq
+
+# sudo $PIP3 install docwriter sphinx
+
+echo ""
+echo "-------------------------------------------------------------------"
+echo "INSTALLING development libraries (using APT)"
+echo "  (UNATTENDED: [$UNATTENDED])"
+echo "-------------------------------------------------------------------"
+echo ""
+
+set -ev
+
+sudo yum $UNATTENDED install  \
+  cairo-devel                 \
+  libpng-devel                \
+  libjpeg-devel               \
+  libxml2-devel
+
+echo ""
+echo "-------------------------------------------------------------------"
+echo "GETTING Poppler source code (using wget)"
+echo "  (POPPLER_VERSION: [$POPPLER_VERSION])"
+echo "-------------------------------------------------------------------"
+echo ""
+
+echo "Getting poppler version: $POPPLER_VERSION"
+
+export FOLDER=poppler
+cd $SOURCE_FOLDER
+rm -rf $FOLDER
+mkdir -p $FOLDER
+curl -L https://poppler.freedesktop.org/poppler-$POPPLER_VERSION.tar.xz \
+  | tar xJ --strip-components=1 -C $FOLDER
+
+echo ""
+echo "-------------------------------------------------------------------"
+echo "GETTING poppler-data source code (using wget)"
+echo "  (POPPLER_DATA_VERSION: [$POPPLER_DATA_VERSION])"
+echo "-------------------------------------------------------------------"
+echo ""
+
+echo "Getting poppler-data version: $POPPLER_DATA_VERSION"
+
+export FOLDER=poppler-data
+cd $SOURCE_FOLDER
+rm -rf $FOLDER
+mkdir -p $FOLDER
+curl -L https://poppler.freedesktop.org/poppler-data-$POPPLER_DATA_VERSION.tar.gz \
+  | tar zx --strip-components=1 -C $FOLDER
+
+echo ""
+echo "-------------------------------------------------------------------"
+echo "BUILDING Poppler (using CMake)"
+echo "-------------------------------------------------------------------"
+echo ""
+
+set -ev
+
+cd $SOURCE_FOLDER/poppler
+mkdir build
+cd build
+$CMAKE                                       \
+  -DCMAKE_BUILD_TYPE=Release                \
+  -DCMAKE_INSTALL_PREFIX=$PDF2HTMLEX_PREFIX \
+  -DENABLE_UNSTABLE_API_ABI_HEADERS=OFF     \
+  -DBUILD_GTK_TESTS=OFF                     \
+  -DBUILD_QT5_TESTS=OFF                     \
+  -DBUILD_CPP_TESTS=OFF                     \
+  -DENABLE_SPLASH=ON                        \
+  -DENABLE_UTILS=OFF                        \
+  -DENABLE_CPP=OFF                          \
+  -DENABLE_GLIB=ON                          \
+  -DENABLE_GOBJECT_INTROSPECTION=OFF        \
+  -DENABLE_GTK_DOC=OFF                      \
+  -DENABLE_QT5=OFF                          \
+  -DENABLE_LIBOPENJPEG="none"               \
+  -DENABLE_CMS="none"                       \
+  -DENABLE_DCTDECODER="libjpeg"             \
+  -DENABLE_LIBCURL=OFF                      \
+  -DENABLE_ZLIB=ON                          \
+  -DENABLE_ZLIB_UNCOMPRESS=OFF              \
+  -DUSE_FLOAT=OFF                           \
+  -DBUILD_SHARED_LIBS=OFF                   \
+  -DRUN_GPERF_IF_PRESENT=OFF                \
+  -DEXTRA_WARN=OFF                          \
+  -DWITH_JPEG=ON                            \
+  -DWITH_PNG=ON                             \
+  -DWITH_TIFF=OFF                           \
+  -DWITH_NSS3=OFF                           \
+  -DWITH_Cairo=ON                           \
+  ..
+
+make $MAKE_PARALLEL
+sudo make install
+
+echo ""
+echo "-------------------------------------------------------------------"
+echo "GETTING FontForge sources (using curl)"
+echo "  (FONTFORGE_VERSION: [$FONTFORGE_VERSION])"
+echo "-------------------------------------------------------------------"
+echo ""
+
+set -ev
+
+echo "Getting fontforge version: $FONTFORGE_VERSION"
+
+export FOLDER=fontforge
+cd $SOURCE_FOLDER
+rm -rf $FOLDER
+mkdir -p $FOLDER
+curl -L https://github.com/fontforge/fontforge/archive/$FONTFORGE_VERSION.tar.gz \
+  | tar zx --strip-components=1 -C $FOLDER
+
+echo ""
+echo "-------------------------------------------------------------------"
+echo "BUILDING FontForge (using CMake)"
+echo "-------------------------------------------------------------------"
+echo ""
+
+set -ev
+
+cd $SOURCE_FOLDER/fontforge
+mkdir build
+cd build
+
+$CMAKE                                       \
+  -DCMAKE_BUILD_TYPE=Release                \
+  -DCMAKE_INSTALL_PREFIX=$PDF2HTMLEX_PREFIX \
+  -DBUILD_SHARED_LIBS:BOOL=OFF              \
+  -DENABLE_GUI:BOOL=OFF                     \
+  -DENABLE_X11:BOOL=OFF                     \
+  -DENABLE_NATIVE_SCRIPTING:BOOL=ON         \
+  -DENABLE_PYTHON_SCRIPTING:BOOL=OFF        \
+  -DENABLE_PYTHON_EXTENSION:AUTO=OFF        \
+  -DENABLE_LIBSPIRO:BOOL=OFF                \
+  -DENABLE_LIBUNINAMESLIST:BOOL=OFF         \
+  -DENABLE_LIBGIF:AUTO=OFF                  \
+  -DENABLE_LIBJPEG:AUTO=ON                  \
+  -DENABLE_LIBPNG:AUTO=ON                   \
+  -DENABLE_LIBREADLINE:AUTO=OFF             \
+  -DENABLE_LIBTIFF:AUTO=OFF                 \
+  -DENABLE_WOFF2:AUTO=OFF                   \
+  -DENABLE_DOCS:AUTO=OFF                    \
+  -DENABLE_CODE_COVERAGE:BOOL=OFF           \
+  -DENABLE_DEBUG_RAW_POINTS:BOOL=OFF        \
+  -DENABLE_FONTFORGE_EXTRAS:BOOL=OFF        \
+  -DENABLE_MAINTAINER_TOOLS:BOOL=OFF        \
+  -DENABLE_TILE_PATH:BOOL=OFF               \
+  -DENABLE_WRITE_PFM:BOOL=OFF               \
+  -DENABLE_SANITIZER:ENUM="none"            \
+  -DENABLE_FREETYPE_DEBUGGER:PATH=""        \
+  -DSPHINX_USE_VENV:BOOL=OFF                \
+  -DREAL_TYPE:ENUM="double"                 \
+  -DTHEME:ENUM="tango"                      \
+  ..
+
+make $MAKE_PARALLEL
+sudo make install
+
+echo ""
+echo "-------------------------------------------------------------------"
+echo "BUILDING pdf2htmlEX (using gcc)"
+echo "  PDF2HTMLEX_VERSION = [$PDF2HTMLEX_VERSION]"
+echo "-------------------------------------------------------------------"
+
+echo ""
+
+set -ev
+
+cd $SOURCE_FOLDER/pdf2htmlEX
+rm -rf build
+mkdir build
+cd build
+$CMAKE -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$PDF2HTMLEX_PREFIX ..
+make $MAKE_PARALLEL
+sudo make install

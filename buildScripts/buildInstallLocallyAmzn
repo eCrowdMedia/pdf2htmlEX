@@ -7,7 +7,22 @@
 #
 export UNATTENDED="-y"
 export MAKE_PARALLEL="-j $(nproc)"
+
+export SOURCE_FOLDER="$(pwd)"
+export PLATFORM="$(uname -r | sed 's/.*\(amzn[12]\).*/\1/')"
 export CMAKE="cmake3"
+
+if [ "$PLATFORM" == "amzn1" ] ; then
+  export GCC="gcc72"
+  export GPP="gcc72-c++"
+  export PYTHON_PIP3="python36-pip"
+  export PIP3="pip-3.6"
+else
+  export GCC="gcc"
+  export GPP="gcc-c++"
+  export PYTHON_PIP3="python3-pip"
+  export PIP3="pip3"
+fi
 
 # choose one of the following...
 #
@@ -19,10 +34,6 @@ export PDF2HTMLEX_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 # CHANGE IT TO SUIT YOUR NEEDS:
 #
 export PDF2HTMLEX_PREFIX=/usr
-
-# Ensure all Apt packages are installed with no user interaction
-#
-export DEBIAN_FRONTEND=noninteractive
 
 set -ev
 

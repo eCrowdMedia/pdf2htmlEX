@@ -1,4 +1,5 @@
 #!/bin/sh
+. $SOURCE_FOLDER/reSourceVersionEnvs
 
 # This shell script builds the latest poppler
 
@@ -10,42 +11,53 @@ echo ""
 
 set -ev
 
-cd poppler
-mkdir build
-cd build
-$CMAKE                                      \
-  -DCMAKE_BUILD_TYPE=Release                \
-  -DCMAKE_INSTALL_PREFIX=$PDF2HTMLEX_PREFIX \
-  -DENABLE_UNSTABLE_API_ABI_HEADERS=OFF     \
-  -DBUILD_GTK_TESTS=OFF                     \
-  -DBUILD_QT5_TESTS=OFF                     \
-  -DBUILD_CPP_TESTS=OFF                     \
-  -DENABLE_SPLASH=ON                        \
-  -DENABLE_UTILS=OFF                        \
-  -DENABLE_CPP=OFF                          \
-  -DENABLE_GLIB=ON                          \
-  -DENABLE_GOBJECT_INTROSPECTION=OFF        \
-  -DENABLE_GTK_DOC=OFF                      \
-  -DENABLE_QT5=OFF                          \
-  -DENABLE_LIBOPENJPEG="none"               \
-  -DENABLE_CMS="none"                       \
-  -DENABLE_DCTDECODER="libjpeg"             \
-  -DENABLE_LIBCURL=OFF                      \
-  -DENABLE_ZLIB=ON                          \
-  -DENABLE_ZLIB_UNCOMPRESS=OFF              \
-  -DUSE_FLOAT=OFF                           \
-  -DBUILD_SHARED_LIBS=OFF                   \
-  -DRUN_GPERF_IF_PRESENT=OFF                \
-  -DEXTRA_WARN=OFF                          \
-  -DWITH_JPEG=ON                            \
-  -DWITH_PNG=ON                             \
-  -DWITH_TIFF=OFF                           \
-  -DWITH_NSS3=OFF                           \
-  -DWITH_Cairo=ON                           \
-  ..
+mkdir -p poppler/build
+cd poppler/build
+if test -e configure ; then
+  ./configure                   \
+    --prefix=$PDF2HTMLEX_PREFIX \
+    --libdir=$LIBDIR            \
+    --enable-build-type=release \
+    --enable-xpdf-headers       \
+    --enable-gtk-doc=no         \
+    --enable-libcurl            \
+    --enable-static=no
+else
+  $CMAKE                                      \
+    -DCMAKE_BUILD_TYPE=Release                \
+    -DCMAKE_INSTALL_PREFIX=$PDF2HTMLEX_PREFIX \
+    -DENABLE_UNSTABLE_API_ABI_HEADERS=OFF     \
+    -DBUILD_GTK_TESTS=OFF                     \
+    -DBUILD_QT5_TESTS=OFF                     \
+    -DBUILD_CPP_TESTS=OFF                     \
+    -DENABLE_SPLASH=ON                        \
+    -DENABLE_UTILS=OFF                        \
+    -DENABLE_CPP=OFF                          \
+    -DENABLE_GLIB=ON                          \
+    -DENABLE_GOBJECT_INTROSPECTION=OFF        \
+    -DENABLE_GTK_DOC=OFF                      \
+    -DENABLE_QT5=OFF                          \
+    -DENABLE_LIBOPENJPEG="none"               \
+    -DENABLE_CMS="none"                       \
+    -DENABLE_DCTDECODER="libjpeg"             \
+    -DENABLE_LIBCURL=OFF                      \
+    -DENABLE_ZLIB=ON                          \
+    -DENABLE_ZLIB_UNCOMPRESS=OFF              \
+    -DUSE_FLOAT=OFF                           \
+    -DBUILD_SHARED_LIBS=OFF                   \
+    -DRUN_GPERF_IF_PRESENT=OFF                \
+    -DEXTRA_WARN=OFF                          \
+    -DWITH_JPEG=ON                            \
+    -DWITH_PNG=ON                             \
+    -DWITH_TIFF=OFF                           \
+    -DWITH_NSS3=OFF                           \
+    -DWITH_Cairo=ON                           \
+    ..
+fi
 
 make $MAKE_PARALLEL
 
+set -
 
 ###############################################################
 # Poppler CMakeLists.text build options (2020/05/31):

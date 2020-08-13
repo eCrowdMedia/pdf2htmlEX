@@ -7,31 +7,25 @@
 
 echo ""
 echo "-------------------------------------------------------------------"
-echo "GETTING Poppler source code (using wget)"
+echo "GETTING Poppler source code (using curl)"
 echo "  (POPPLER_VERSION: [$POPPLER_VERSION])"
 echo "-------------------------------------------------------------------"
 echo ""
 
+set -ev
 
 echo "Getting poppler version: $POPPLER_VERSION"
 
-rm -rf $POPPLER_VERSION.tar.xz
-rm -rf poppler
-rm -rf poppler-data-0.4.9.tar.gz
-rm -rf poppler-data
+export FOLDER=poppler
+rm -rf $FOLDER
+mkdir -p $FOLDER
+curl -L https://poppler.freedesktop.org/poppler-$POPPLER_VERSION.tar.xz \
+  | tar xJ --strip-components=1 -C $FOLDER
 
-set -ev
+echo "Getting poppler-data version: $POPPLER_DATA_VERSION"
 
-wget https://poppler.freedesktop.org/$POPPLER_VERSION.tar.xz
-
-tar xvf $POPPLER_VERSION.tar.xz
-
-echo "Getting poppler-data version: 0.4.9"
-
-mv $POPPLER_VERSION poppler
-
-wget https://poppler.freedesktop.org/poppler-data-0.4.9.tar.gz
-
-tar xvf poppler-data-0.4.9.tar.gz
-
-mv poppler-data-0.4.9 poppler-data
+export FOLDER=poppler-data
+rm -rf $FOLDER
+mkdir -p $FOLDER
+curl -L https://poppler.freedesktop.org/poppler-data-$POPPLER_DATA_VERSION.tar.gz \
+  | tar zx --strip-components=1 -C $FOLDER

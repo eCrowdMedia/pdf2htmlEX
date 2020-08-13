@@ -19,6 +19,9 @@ export POPPLER_VERSION=poppler-0.89.0
 #export POPPLER_VERSION=poppler-0.82.0
 #export POPPLER_VERSION=poppler-0.81.0
 
+export POPPLER_DATA_VERSION=0.4.9
+# export POPPLER_DATA_VERSION=0.4.7
+
 # see: https://github.com/fontforge/fontforge/releases
 # current working: 20190801
 
@@ -63,6 +66,12 @@ else
   exit -1
 fi
 
+if test -e $PDF2HTMLEX_PREFIX/lib64 ; then
+  export LIBDIR=$PDF2HTMLEX_PREFIX/lib64
+else
+  export LIBDIR=$PDF2HTMLEX_PREFIX/lib
+fi
+
 export BUILD_DATE="$(date +%Y%m%d)"
 
 export BUILD_TIME="$(date +%Y_%m_%d-%H_%M_%S)"
@@ -82,3 +91,4 @@ echo "export BUILD_DIST=\"$BUILD_DIST\""                 >> buildScripts/reSourc
 echo "export BUILD_DATE=\"$BUILD_DATE\""                 >> buildScripts/reSourceVersionEnvs
 echo "export BUILD_TIME=\"$BUILD_TIME\""                 >> buildScripts/reSourceVersionEnvs
 echo "export PDF2HTMLEX_PREFIX=\"$PDF2HTMLEX_PREFIX\""   >> buildScripts/reSourceVersionEnvs
+echo "export LIBDIR=\"$LIBDIR\""                                    >> $SOURCE_FOLDER/reSourceVersionEnvs
